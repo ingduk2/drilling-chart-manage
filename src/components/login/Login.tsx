@@ -1,25 +1,21 @@
 import React from 'react';
-import { Button } from 'antd';
 import './Login.css';
 import { RouteComponentProps } from 'react-router-dom';
 import logo from '../../resource/logo.png';
 import {
   FacebookLoginButton,
   GoogleLoginButton,
-  GithubLoginButton,
-  TwitterLoginButton,
-  AmazonLoginButton,
-  InstagramLoginButton,
-  LinkedInLoginButton,
-  MicrosoftLoginButton,
-  BufferLoginButton,
 } from 'react-social-login-buttons';
-
+import { auth } from '../../firebase/FirebaseConfig';
+import 'firebase/auth';
+import firebase from 'firebase';
 // interface Props extends RouteComponentProps {}
 
 function Login({ history }: RouteComponentProps) {
+  const provider = new firebase.auth.GoogleAuthProvider();
   const googleLogin = () => {
-    history.push('/home');
+    // history.push('/home');
+    auth.signInWithPopup(provider);
   };
 
   const facebookLogin = () => {
@@ -28,14 +24,7 @@ function Login({ history }: RouteComponentProps) {
 
   return (
     <div className="container">
-      <div
-        style={{
-          alignItems: 'center',
-          textAlign: 'center',
-          justifyContent: 'center',
-          border: '1px solid gray',
-        }}
-      >
+      <div className="loginForm">
         <img src={logo} alt="" />
         <FacebookLoginButton onClick={facebookLogin} />
         <GoogleLoginButton onClick={googleLogin} />

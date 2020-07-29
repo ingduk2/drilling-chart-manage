@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import '../App.css';
-import { Layout, Menu } from 'antd';
+import './Home.css';
+import { Layout, Menu, Button } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -8,25 +8,36 @@ import {
   VideoCameraOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import logo from '../resource/logo.png';
-import CustomerDetail from './CustomerDetail';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+
+import logo from '../../resource/logo.png';
 import CustomerList from './CustomerList';
 
 const { Header, Content, Footer, Sider } = Layout;
 
-function Home() {
+type wrapperParam = {
+  children: React.ReactNode;
+  history: RouteComponentProps;
+};
+
+//각각해도 안되고 이상하다 ㅡㅡ 아직 type스크립트 모르겠다..
+function HomeWrapper({ history, children }: any) {
   const [collapsed, setCollapsed] = useState(false);
   const toggle = () => {
     setCollapsed(!collapsed);
   };
+
+  const goUploadForm = () => {
+    history.push('/home/upload');
+  };
   return (
     <div>
-      <Layout style={{}}>
+      <Layout>
         <Sider trigger={null} collapsible collapsed={collapsed}>
           <div className="logo">
             <img src={logo} alt="" className="logoImg" />
           </div>
-          <CustomerList />
+          <CustomerList></CustomerList>
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
@@ -37,12 +48,14 @@ function Home() {
                 onClick: toggle,
               },
             )}
+            <Button onClick={goUploadForm} type="dashed">
+              사용자 추가
+            </Button>
           </Header>
-          <CustomerDetail />
+          {children}
         </Layout>
       </Layout>
     </div>
   );
 }
-
-export default Home;
+export default withRouter(HomeWrapper);
