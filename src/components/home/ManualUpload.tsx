@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Upload, message, Input, Button, Layout } from 'antd';
+import { Upload, message, Input, Button, Layout, Space } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { storage, firestore } from '../../firebase/FirebaseConfig';
+import { Progress } from 'antd';
 
-function ManualUpload() {
+type props = {
+  handleImageUpload: Function;
+};
+
+function ManualUpload(props: props) {
   const [fileList, setFileList] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [imageList, setImageList] = useState<string[]>([]);
-
+  const [progress, setProgress] = useState(0);
+  const { handleImageUpload } = props;
   const firestorageSave = async (image: File) => {
     console.log('logding');
     await setLoading(true);
@@ -21,10 +27,10 @@ function ManualUpload() {
         'state_changed',
         (snapshot) => {
           // setLoading(true);
-          //   const progress = Math.round(
-          //     (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-          //   );
-          //   setProgress(progress);
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+          );
+          setProgress(progress);
         },
         (error) => {
           console.log(error);
@@ -40,9 +46,7 @@ function ManualUpload() {
               console.log(url);
               setLoading(false);
               imageList.push(url);
-              setImageList(imageList);
-              console.log(imageList);
-              //   alert('이미지 업로드 성공');
+              handleImageUpload(url);
             });
         },
       );
@@ -56,10 +60,11 @@ function ManualUpload() {
     // showUploadList: {
     //     showRemoveIcon: false,
     //   },
-    beforeUpload: async (file: any) => {
-      await console.log('beforeUpload', file);
-      await firestorageSave(file);
-      await console.log('afterUpload');
+    beforeUpload: (file: any) => {
+      setProgress(0);
+      console.log('beforeUpload', file);
+      firestorageSave(file);
+      console.log('afterUpload');
       let count = [];
       let files: Array<any> = [];
       files = fileList;
@@ -67,6 +72,7 @@ function ManualUpload() {
       reader.readAsDataURL(file);
       reader.onload = (e) => {
         file.thumbUrl = e.target?.result;
+        file.status = 'done';
         files.push(file);
         files.map((item: any, index: any) => {
           if (file.name === item.name) {
@@ -88,11 +94,6 @@ function ManualUpload() {
       };
       return false;
     },
-    // onChange: ({ fileList: newFileList }: any) => {
-    //   console.log('newfileList', newFileList);
-    //   console.log('fileList', fileList);
-    //   setFileList(newFileList);
-    // },
   };
 
   const uploadButton = (
@@ -140,10 +141,11 @@ function ManualUpload() {
   };
 
   return (
-    <div>
+    <Space>
       <Upload {...antdUploadProps}>{uploadButton}</Upload>
       {/* <button onClick={deleteFiresTore}>firestorage delete</button> */}
-    </div>
+      <Progress type="circle" percent={progress} width={80} />
+    </Space>
   );
 }
 

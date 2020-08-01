@@ -16,11 +16,11 @@ type data = {
   memo: string;
   name: string;
   phoneNumber: string;
-  storageUrl: string;
+  // storageUrl: string;
 };
 
 type file = {
-  uid: string;
+  uid: number;
   name: string;
   status: string;
   url: string;
@@ -28,14 +28,7 @@ type file = {
 function CustomerDetail({ match }: RouteComponentProps<MatchParams>) {
   const [customerData, setCustomerData] = useState<data | undefined>(undefined);
 
-  const [fileLists, setFileList] = useState<any>([
-    {
-      uid: '-1',
-      name: 'image.png',
-      status: 'done',
-      url: '',
-    },
-  ]);
+  const [fileLists, setFileList] = useState<any[]>([]);
 
   useEffect(() => {
     const id = match.params.id;
@@ -52,17 +45,21 @@ function CustomerDetail({ match }: RouteComponentProps<MatchParams>) {
             memo: doc.data()?.firestoreData.memo,
             name: doc.data()?.firestoreData.name,
             phoneNumber: doc.data()?.firestoreData.phoneNumber,
-            storageUrl: doc.data()?.firestoreData.storageUrl,
+            // storageUrl: doc.data()?.firestoreData.storageUrl,
           });
-          fileLists[0].url = doc.data()?.firestoreData.storageUrl;
-          setFileList([
-            {
-              uid: id,
+          // fileLists[0].url = doc.data()?.firestoreData.storageUrl;
+          const imageList: [] = doc.data()?.firestoreData.storageUrl;
+          console.log('---', imageList);
+          const files: any[] = [];
+          imageList.map((item, idx) => {
+            files.push({
+              uid: idx,
               name: 'image.png',
               status: 'done',
-              url: doc.data()?.firestoreData.storageUrl,
-            },
-          ]);
+              url: item,
+            });
+          });
+          setFileList(files);
         });
     };
     fetchData();

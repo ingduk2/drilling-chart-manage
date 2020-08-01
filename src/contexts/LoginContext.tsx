@@ -24,7 +24,8 @@ function loginReducer(state: Login, action: Action): Login {
         email: action.email,
         uid: action.uid,
       };
-      localStorage.setItem('LoginInfo', JSON.stringify(loginInfo));
+      localStorage.setItem('LoginInfo', '');
+      window.sessionStorage.setItem('LoginInfo', JSON.stringify(loginInfo));
       return loginInfo;
     case 'SIGNIN':
       console.log('SIGNIN');
