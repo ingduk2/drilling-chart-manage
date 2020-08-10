@@ -37,10 +37,10 @@ function Auth() {
     <div>
       {!isLogin && (
         <AuthWrapper>
-          <StyledFirebaseAuth
+          {/* <StyledFirebaseAuth
             uiConfig={uiConfig}
             firebaseAuth={firebase.auth()}
-          />
+          /> */}
           <Route path="/auth/login" component={Login} />
           <Route path="/auth/register" component={Register} />
         </AuthWrapper>

@@ -31,6 +31,7 @@ type inputParam = {
   name: string;
   placeholder: string;
   onChange?: any;
+  onKeyPress?: any;
   type?: string;
 };
 

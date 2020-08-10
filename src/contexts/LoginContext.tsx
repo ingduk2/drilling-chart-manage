@@ -3,14 +3,16 @@ import React, { createContext, Dispatch, useContext, useReducer } from 'react';
 export type Login = {
   uid: string;
   email: string | null;
+  maintain: string;
 };
 
 const LoginContext = createContext<Login | undefined>(undefined);
 
 type Action =
-  | { type: 'LOGIN'; email: string | null; uid: string }
-  | { type: 'SIGNIN'; email: string | null; uid: string }
-  | { type: 'LOGOUT'; email: string | null; uid: string };
+  | { type: 'LOGIN'; email: string | null; uid: string; maintain: string }
+  | { type: 'SIGNIN'; email: string | null; uid: string; maintain: string }
+  | { type: 'LOGOUT'; email: string | null; uid: string; maintain: string };
+// | { type: 'MAINTAIN'; email: string | null; uid: string ; maintain : string};
 
 type LoginDispatch = Dispatch<Action>;
 const LoginDispatchContext = createContext<LoginDispatch | undefined>(
@@ -18,22 +20,27 @@ const LoginDispatchContext = createContext<LoginDispatch | undefined>(
 );
 
 function loginReducer(state: Login, action: Action): Login {
+  console.log('loginReducer', action.type);
   switch (action.type) {
     case 'LOGIN':
       const loginInfo = {
         email: action.email,
         uid: action.uid,
+        maintain: action.maintain,
       };
-      localStorage.setItem('LoginInfo', '');
-      window.sessionStorage.setItem('LoginInfo', JSON.stringify(loginInfo));
+      localStorage.setItem('LoginInfo', JSON.stringify(loginInfo));
+      // window.sessionStorage.setItem('LoginInfo', JSON.stringify(loginInfo));
       return loginInfo;
     case 'SIGNIN':
       console.log('SIGNIN');
     case 'LOGOUT':
-      return {
+      const logoutInfo = {
         email: action.email,
         uid: action.uid,
+        maintain: action.maintain,
       };
+      localStorage.setItem('LoginInfo', JSON.stringify(logoutInfo));
+      return logoutInfo;
     default:
       throw new Error('Unhandled action');
   }
@@ -47,6 +54,7 @@ export function LoginContextProvider({
   const [Login, dispatch] = useReducer(loginReducer, {
     email: '',
     uid: '',
+    maintain: '',
   });
 
   return (
