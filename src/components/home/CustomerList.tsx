@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Input } from 'antd';
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  AudioOutlined,
-} from '@ant-design/icons';
+import { UserOutlined, AudioOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-import firebase from 'firebase';
 import { firestore } from 'firebase/FirebaseConfig';
 const { Search } = Input;
-const { Header, Content, Footer, Sider } = Layout;
 
 type data = {
   id: string;
@@ -37,8 +28,8 @@ function CustomerList({ history }: any) {
   );
 
   useEffect(() => {
+    console.log('customerList useEffect');
     const fetchData = async () => {
-      // console.log('list login ', firebase.auth().currentUser!.email);
       const customerDatas: data[] = [];
       await firestore
         .collection('customer')
@@ -66,18 +57,25 @@ function CustomerList({ history }: any) {
     };
     fetchData();
   }, []);
-  console.log('----', customerData);
+  // console.log('----', customerData);
 
+  /**
+   * go detail
+   * @param e
+   */
   const detail = (e: any | undefined) => {
-    // console.log('---', e);
     console.log(e.key);
-    // console.log();
     history.push(`/home/detail/${e.key}`);
   };
 
+  /**
+   * search
+   * @param searchVal
+   */
   const search = (searchVal: string) => {
     setSearchVal(searchVal);
   };
+
   return (
     <div style={{ padding: 10 }}>
       <Search placeholder="input search text" onSearch={search} enterButton />

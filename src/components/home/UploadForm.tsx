@@ -1,32 +1,32 @@
 import React, { useState } from 'react';
-import { Upload, message, Input, Button, Layout } from 'antd';
-import ImgCrop from 'antd-img-crop';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { storage, firestore } from '../../firebase/FirebaseConfig';
+import { Input, Button, Layout } from 'antd';
+import { firestore } from '../../firebase/FirebaseConfig';
 import { useLoginState } from 'contexts/LoginContext';
 import ManualUpload from './ManualUpload';
 const { TextArea } = Input;
 const { Content } = Layout;
 
-function UploadForm() {
-  const Login = useLoginState();
-  console.log(
-    'uploadForm',
-    localStorage.getItem('LoginInfo'),
-    '===',
-    window.sessionStorage.getItem('LoginInfo'),
-  );
+type image = {
+  imageUrl: string;
+  fileName: string;
+};
 
-  const [loading, setLoading] = useState(false);
+function UploadForm({ history }: any) {
+  const Login = useLoginState();
 
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [memo, setMemo] = useState('');
-  const [storageUrl, setStorageUrl] = useState('');
-  const [imageList, setImageList] = useState<string[]>([]);
+  const [imageList, setImageList] = useState<image[]>([]);
 
+  /**
+   * 사용자 정보 firebase 저장
+   * @param e
+   */
   const saveCustomer = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     e.preventDefault();
+
+    // console.log(firestoreData);
 
     const firestoreData = {
       name: name,
@@ -34,19 +34,17 @@ function UploadForm() {
       memo: memo,
       storageUrl: imageList,
     };
-    console.log(firestoreData);
+
     firestore
       .collection('customer')
-      // .doc('a')
-      // .set({
-      //   firestoreData,
-      // })
       .add({
         firestoreData,
       })
       .then(() => {
         console.log('Success');
         alert('저장 성공');
+        //list update 필요.
+        history.push('/home');
       })
       .catch((error) => {
         console.error('error');
@@ -54,12 +52,24 @@ function UploadForm() {
       });
   };
 
-  // console.log('image', image);
-
-  const handleImageUpload = (imageUrl: string) => {
-    imageList.push(imageUrl);
+  /**
+   * ManualUpload 에서 imageUrl , fileName add
+   * @param imageUrl
+   * @param fileName
+   */
+  const addImageUpload = (imageUrl: string, fileName: string) => {
+    imageList.push({ imageUrl, fileName });
     setImageList(imageList);
-    console.log('-handleImageUpload', imageList);
+    // console.log('-addeImageUpload', imageList);
+  };
+
+  /**
+   * ManualUpload 에서 imageUrl , fileName delete
+   * @param idx
+   */
+  const deleteImageUpload = (idx: number) => {
+    imageList.splice(idx, 1);
+    // console.log('-deleteImageUpload', imageList);
   };
   return (
     <div>
@@ -91,7 +101,11 @@ function UploadForm() {
             onChange={(e) => setMemo(e.target.value)}
           />
         </div>
-        <ManualUpload handleImageUpload={handleImageUpload} />
+        <ManualUpload
+          addImageUpload={addImageUpload}
+          deleteImageUpload={deleteImageUpload}
+          fileList={undefined}
+        />
         <div>
           <Button type="primary" onClick={saveCustomer}>
             저장

@@ -12,7 +12,6 @@ type Action =
   | { type: 'LOGIN'; email: string | null; uid: string; maintain: string }
   | { type: 'SIGNIN'; email: string | null; uid: string; maintain: string }
   | { type: 'LOGOUT'; email: string | null; uid: string; maintain: string };
-// | { type: 'MAINTAIN'; email: string | null; uid: string ; maintain : string};
 
 type LoginDispatch = Dispatch<Action>;
 const LoginDispatchContext = createContext<LoginDispatch | undefined>(

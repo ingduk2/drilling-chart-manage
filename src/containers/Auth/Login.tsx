@@ -15,12 +15,11 @@ function Login({ history }: RouteComponentProps) {
   const dispatch = useLoginDispatch();
 
   useEffect(() => {
-    // console.log('====login', firebase.auth().currentUser);
-    // console.log('====login', firebase.auth().currentUser!.uid);
+    //login유지 T 이면 /home 으로
     const loginInfo: string | null = localStorage.getItem('LoginInfo');
     if (loginInfo !== null) {
       const jsonLoginInfo = JSON.parse(loginInfo);
-      console.log(jsonLoginInfo);
+      // console.log(jsonLoginInfo);
       const savedMaintain: string = jsonLoginInfo.maintain;
       if (savedMaintain === 'T') {
         history.push('/home');
@@ -42,11 +41,13 @@ function Login({ history }: RouteComponentProps) {
     }
   };
 
+  /**
+   * login 기능 화면 로그인 유지 선택에 따라 firebase Session 선택
+   */
   const login = async () => {
     let isError: boolean = false;
     await firebase
       .auth()
-      // .setPersistence(firebase.auth.Auth.Persistence.SESSION)
       .setPersistence(
         isLoginMaintain
           ? firebase.auth.Auth.Persistence.LOCAL
@@ -69,24 +70,28 @@ function Login({ history }: RouteComponentProps) {
         uid: firebase.auth().currentUser!.uid,
         maintain: isLoginMaintain ? 'T' : 'F',
       });
-      console.log('====', firebase.auth().currentUser!.email);
-      console.log('====', firebase.auth().currentUser!.uid);
-      // alert(firebase.auth());
-      // alert('로그인 성공');
-      console.log('====', firebase.auth());
-      history.push('/home');
+      // console.log('====', firebase.auth().currentUser!.email);
+      // console.log('====', firebase.auth().currentUser!.uid);
+      history.push('/home/main');
     }
   };
 
-  const checkChange = () => {
+  /**
+   * 로그인 유지 체크
+   */
+  const changeIsMaintain = () => {
     setIsLoginMaintain(!isLoginMaintain);
   };
 
+  /**
+   * 엔터키 입력
+   */
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
       login();
     }
   };
+
   return (
     <AuthContent title="로그인">
       <InputWithLabel
@@ -104,7 +109,7 @@ function Login({ history }: RouteComponentProps) {
         onKeyPress={handleKeyPress}
       />
 
-      <Checkbox onChange={checkChange}>로그인 유지</Checkbox>
+      <Checkbox onChange={changeIsMaintain}>로그인 유지</Checkbox>
       <AuthButton onClick={login}>로그인</AuthButton>
       <RightAlignedLink to="/auth/register">회원가입</RightAlignedLink>
     </AuthContent>

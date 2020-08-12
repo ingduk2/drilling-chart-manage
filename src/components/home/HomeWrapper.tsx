@@ -30,10 +30,16 @@ function HomeWrapper({ history, children }: any) {
     setCollapsed(!collapsed);
   };
 
+  /**
+   * go Upload
+   */
   const goUploadForm = () => {
     history.push('/home/upload');
   };
 
+  /**
+   * LogOut
+   */
   const logOut = () => {
     //context 에서 날려야함
     dispatch({
@@ -54,6 +60,7 @@ function HomeWrapper({ history, children }: any) {
         console.log('logout error', error);
       });
   };
+
   return (
     <div>
       <Layout>
@@ -61,7 +68,7 @@ function HomeWrapper({ history, children }: any) {
           <div className="logo">
             <img src={logo} alt="" className="logoImg" />
           </div>
-          <CustomerList></CustomerList>
+          <CustomerList />
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
